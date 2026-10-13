@@ -89,12 +89,12 @@ def depthFirstSearch(problem: SearchProblem) -> list[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    stack: util.Stack = util.Stack();
+    stack = util.Stack();
     exploredSet = set();
 
-    currentState  = problem.getStartState();
+    currentState = problem.getStartState();
 
-    stack.push((currentState, []))
+    stack.push((currentState, [])) # 0: huidige coordinaat, 1: afgegaan path (lijst van directions)
 
     while not stack.isEmpty():
         state, path = stack.pop();
@@ -116,10 +116,30 @@ def depthFirstSearch(problem: SearchProblem) -> list[Directions]:
 
     
 
-def breadthFirstSearch(problem):
+def breadthFirstSearch(problem: SearchProblem) -> list[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    queue = util.Queue();
+    exploredSet = set();
+
+    startState = problem.getStartState();
+    queue.push((startState, []));
+
+    while not queue.isEmpty():
+        state, path = queue.pop()
+        if state in exploredSet:
+            continue
+
+        exploredSet.add(state)
+        if problem.isGoalState(state):
+            return path
+        
+        for successor, action, _ in problem.getSuccessors(state):
+            if successor not in exploredSet:
+                queue.push((successor, path + [action]))
+
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
