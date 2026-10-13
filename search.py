@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 from game import Directions
+from pacman import GameState
 
 class SearchProblem:
     """
@@ -88,7 +89,32 @@ def depthFirstSearch(problem: SearchProblem) -> list[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    stack: util.Stack = util.Stack();
+    exploredSet = set();
+
+    currentState  = problem.getStartState();
+
+    stack.push((currentState, []))
+
+    while not stack.isEmpty():
+        state, path = stack.pop();
+
+        if state in exploredSet:
+            continue;
+
+        exploredSet.add(state);
+
+        if problem.isGoalState(state):
+            return path
+
+        successors = problem.getSuccessors(state);
+        for nextPos, direction, _ in successors:
+            if nextPos not in exploredSet:
+                stack.push((nextPos, path + [direction]))
+
+    return []
+
+    
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
