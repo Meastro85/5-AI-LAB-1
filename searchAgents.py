@@ -372,23 +372,27 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    currentPos = state[0]
-    costList = []
-    costDict = dict()
+    currentPos, visited = state[0], state[1]
 
-    for corner in corners:
-        if corner in state[1]:
-            continue
+    remaining = [c for c in corners if c not in visited]
+    if not remaining:
+        return 0
 
-        if corner not in costDict:
-            costDict[corner] = 0;
+    def manhattan(a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
-        cost = abs(currentPos[0] - corner[0]) + abs(currentPos[1] - corner[1])
-        costDict[corner] += cost
-        costList.append(cost)
+    def cheapest(pos, left):
+        if not left:
+            return 0
+        best = float('inf')
+        for i, corner in enumerate(left):
+            rest = left[:i] + left[i+1:]
+            cost = manhattan(pos, corner) + cheapest(corner, rest)
+            if cost < best:
+                best = cost
+        return best
 
-    if len(costList) == 0: return 0
-    return min(costList)
+    return cheapest(currentPos, remaining)
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
