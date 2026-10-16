@@ -144,7 +144,26 @@ def breadthFirstSearch(problem: SearchProblem) -> list[Directions]:
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    priorityQueue = util.PriorityQueue();
+    exploredSet = set();
+
+    startState = problem.getStartState();
+    priorityQueue.push((startState, [], 0), 0);
+
+    while not priorityQueue.isEmpty():
+        state, path, pathCost = priorityQueue.pop()
+        if state in exploredSet:
+            continue
+
+        exploredSet.add(state)
+        if problem.isGoalState(state):
+            return path
+
+        for successor, action, cost in problem.getSuccessors(state):
+            if successor not in exploredSet:
+                priorityQueue.push((successor, path + [action], cost + pathCost), cost + pathCost);
+
+    return []
 
 def nullHeuristic(state, problem=None):
     """
@@ -156,7 +175,27 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    priorityQueue = util.PriorityQueue();
+    exploredDictionary = dict();
+
+    startState = problem.getStartState();
+    exploredDictionary[startState] = 0
+    priorityQueue.push((startState, [], 0), 0);
+
+    while not priorityQueue.isEmpty():
+        state, path, pathCost = priorityQueue.pop()
+        if pathCost > exploredDictionary[state]:
+            continue
+
+        if problem.isGoalState(state):
+            return path
+
+        for successor, action, cost in problem.getSuccessors(state):
+            if successor not in exploredDictionary or (pathCost + cost) < exploredDictionary[successor]:
+                exploredDictionary[successor] = pathCost + cost
+                priorityQueue.push((successor, path + [action], cost + pathCost), cost + pathCost + heuristic(successor, problem));
+
+    return []
 
 
 # Abbreviations
